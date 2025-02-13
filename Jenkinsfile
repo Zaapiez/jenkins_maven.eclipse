@@ -6,8 +6,8 @@ pipeline {
     }
     
     environment {
-        SONAR_HOST_URL = 'http://localhost:9000' // Replace with your SonarQube server URL
-        SONAR_TOKEN = 'jenkin token' // Use Jenkins credentials instead of hardcoding
+        SONAR_HOST_URL = 'http://localhost:9000'
+        SONAR_TOKEN = 'sonarqube_token'
     }
 
     stages {
@@ -22,9 +22,6 @@ pipeline {
             steps {
                 echo "Start Test"
                 bat "mvn test"
-                
-                echo "Running SonarQube Analysis"
-                bat "mvn sonar:sonar -Dsonar.projectKey=jenkins_maven.eclipse -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_TOKEN}"
             }
         }
         
@@ -32,6 +29,12 @@ pipeline {
             steps {
                 echo "Start Build"
                 bat "mvn install -DskipTests"
+            }
+        }
+        stage("Sonar") {
+            steps {
+ 				echo "Running SonarQube Analysis"
+                bat "mvn sonar:sonar -Dsonar.projectKey=jenkins_maven.eclipse -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_TOKEN}"
             }
         }
     }
