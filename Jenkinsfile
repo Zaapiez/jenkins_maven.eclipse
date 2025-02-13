@@ -6,10 +6,10 @@ pipeline {
     }
     
     environment {
-        SONAR_SCANNER_HOME = tool 'SonarQube Scanner' 
-        SONAR_HOST_URL = 'http://localhost:9000'
+        SONAR_HOST_URL = 'http://localhost:9000' // Replace with your SonarQube server URL
+        SONAR_TOKEN = 'jenkin token' // Use Jenkins credentials instead of hardcoding
     }
-    
+
     stages {
         stage("clean") {
             steps {
@@ -22,19 +22,15 @@ pipeline {
             steps {
                 echo "Start Test"
                 bat "mvn test"
-            }
-        }
-        
-        stage("sonarqube analysis") {
-            steps {
+                
                 echo "Running SonarQube Analysis"
-                bat "${SONAR_SCANNER_HOME}/bin/sonar-scanner -Dsonar.projectKey=your_project_key -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=your_sonar_token"
+                bat "mvn sonar:sonar -Dsonar.projectKey=jenkins_maven.eclipse -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_TOKEN}"
             }
         }
         
         stage("build") {
             steps {
-                echo "Start build"
+                echo "Start Build"
                 bat "mvn install -DskipTests"
             }
         }
